@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Tambah Karyawan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Tambah Data Karyawan</h4>
+        </div>
+        <div class="card-body">
+            <form action="/tambah" method="POST">
+                <div class="mb-3">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="nama" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Jabatan</label>
+                    <input type="text" name="jabatan" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Departemen</label>
+                    <input type="text" name="departemen" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Gaji (Rp)</label>
+                    <input type="number" name="gaji" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <a href="/" class="btn btn-secondary">Batal</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
