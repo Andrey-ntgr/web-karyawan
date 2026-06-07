@@ -2,40 +2,137 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Karyawan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Karyawan | Dashboard HRD</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #f4f6f9; /* Warna latar belakang abu-abu sangat muda khas dashboard */
+        }
+        .sidebar {
+            min-height: 100vh;
+            background-color: #212529; /* Warna sidebar gelap */
+            color: white;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #0d6efd; /* Warna biru saat menu aktif/di-hover */
+            color: white;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Efek bayangan lembut */
+        }
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #f0f0f0;
+            border-radius: 12px 12px 0 0 !important;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
-    <div class="card shadow mx-auto" style="max-width: 600px;">
-        <div class="card-header bg-warning text-dark">
-            <h4 class="mb-0">Edit Data Karyawan</h4>
+<div class="d-flex">
+    <!-- SIDEBAR -->
+    <div class="sidebar p-3" style="width: 260px;">
+        <h4 class="text-center mb-4 mt-2 fw-bold">
+            <i class="bi bi-buildings text-primary"></i> HRD System
+        </h4>
+        <hr class="text-secondary">
+        <a href="/"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+        <a href="/" class="active"><i class="bi bi-people me-2"></i> Data Karyawan</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-grow-1 p-4">
+        <!-- Header Dashboard -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0 fw-bold">Edit Karyawan</h3>
+            <div class="badge bg-white text-dark shadow-sm p-2 fs-6">
+                <i class="bi bi-person-circle text-primary me-1"></i> Admin
+            </div>
         </div>
-        <div class="card-body">
-            <form action="/edit/<%= data.id %>" method="POST">
-                <div class="mb-3">
-                    <label>Nama Lengkap</label>
-                    <input type="text" name="nama" class="form-control" value="<%= data.nama %>" required>
-                </div>
-                <div class="mb-3">
-                    <label>Jabatan</label>
-                    <input type="text" name="jabatan" class="form-control" value="<%= data.jabatan %>" required>
-                </div>
-                <div class="mb-3">
-                    <label>Departemen</label>
-                    <input type="text" name="departemen" class="form-control" value="<%= data.departemen %>" required>
-                </div>
-                <div class="mb-3">
-                    <label>Gaji (Rp)</label>
-                    <input type="number" name="gaji" class="form-control" value="<%= data.gaji %>" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Update Data</button>
-                <a href="/" class="btn btn-secondary">Batal</a>
-            </form>
+
+        <!-- Breadcrumb (Jalur navigasi) -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Data Karyawan</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Data</li>
+            </ol>
+        </nav>
+
+        <!-- Form Card -->
+        <div class="card mt-2">
+            <div class="card-header py-3 d-flex align-items-center">
+                <i class="bi bi-pencil-square fs-5 text-warning me-2"></i>
+                <h5 class="mb-0 fw-bold">Form Update Data</h5>
+            </div>
+            <div class="card-body p-4">
+                <form action="/edit/<%= data.id %>" method="POST">
+                    
+                    <!-- Baris 1: Nama & Jabatan -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted fw-bold small">NAMA LENGKAP</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-person text-secondary"></i></span>
+                                <input type="text" name="nama" class="form-control" value="<%= data.nama %>" required placeholder="Masukkan nama...">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted fw-bold small">JABATAN</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-briefcase text-secondary"></i></span>
+                                <input type="text" name="jabatan" class="form-control" value="<%= data.jabatan %>" required placeholder="Contoh: Manager">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Baris 2: Departemen & Gaji -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted fw-bold small">DEPARTEMEN</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-diagram-3 text-secondary"></i></span>
+                                <input type="text" name="departemen" class="form-control" value="<%= data.departemen %>" required placeholder="Contoh: IT">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted fw-bold small">GAJI (Rp)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light fw-bold">Rp</span>
+                                <input type="number" name="gaji" class="form-control" value="<%= data.gaji %>" required placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 text-secondary">
+                    
+                    <!-- Tombol Aksi -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="/" class="btn btn-light border px-4"><i class="bi bi-x-lg me-1"></i> Batal</a>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i> Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Bootstrap JS (Optional, untuk komponen interaktif) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
