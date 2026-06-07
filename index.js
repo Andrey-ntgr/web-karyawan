@@ -7,17 +7,32 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Koneksi ke Database db_perusahaan
+// Koneksi ke Database Cloud Aiven
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '', 
-    database: 'db_perusahaan'
+    host: 'mysql-ef0ec28-masalampau544-2dcf.g.aivencloud.com',
+    port: 24813,
+    user: 'avnadmin',
+    password: 'AVNS_lFWmvB1qZ5mqxmRJVy7', // <-- GANTI BAGIAN INI DENGAN PASSWORD AIVEN
+    database: 'defaultdb'
 });
 
 db.connect((err) => {
     if (err) throw err;
-    console.log('Database Perusahaan terhubung...');
+    console.log('Database Aiven terhubung...');
+
+    // Buat tabel otomatis jika belum ada di database cloud
+    const buatTabel = `CREATE TABLE IF NOT EXISTS karyawan (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nama VARCHAR(100) NOT NULL,
+        jabatan VARCHAR(50) NOT NULL,
+        departemen VARCHAR(50) NOT NULL,
+        gaji INT NOT NULL
+    )`;
+    
+    db.query(buatTabel, (err, result) => {
+        if (err) throw err;
+        console.log('Tabel karyawan siap!');
+    });
 });
 
 // ================= ROUTING CRUD =================
@@ -76,3 +91,6 @@ app.get('/hapus/:id', (req, res) => {
 app.listen(3000, () => {
     console.log('Server berjalan di http://localhost:3000');
 });
+
+// WAJIB UNTUK VERCEL: Export aplikasi
+module.exports = app;
