@@ -1,38 +1,39 @@
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
+const path = require('path'); // Tambahan khusus agar Vercel mengenali folder views
 
 const app = express();
 
+// Beri tahu Vercel lokasi folder views yang benar
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Koneksi ke Database Cloud Aiven
-const db = mysql.createConnection({
+// Gunakan "createPool" dan "ssl" agar koneksi stabil di Vercel & Aiven
+const db = mysql.createPool({
     host: 'mysql-ef0ec28-masalampau544-2dcf.g.aivencloud.com',
     port: 24813,
     user: 'avnadmin',
-    password: 'AVNS_lFWmvB1qZ5mqxmRJVy7', // <-- GANTI BAGIAN INI DENGAN PASSWORD AIVEN
-    database: 'defaultdb'
+    password: 'AVNS_lFWmvB1qZ5mqxmRJVy7', // <-- GANTI DENGAN PASSWORD AIVEN!
+    database: 'defaultdb',
+    ssl: {
+        rejectUnauthorized: false // Wajib untuk database cloud Aiven
+    }
 });
 
-db.connect((err) => {
-    if (err) throw err;
-    console.log('Database Aiven terhubung...');
+// Buat tabel otomatis (menggunakan db.query dari pool)
+const buatTabel = `CREATE TABLE IF NOT EXISTS karyawan (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL,
+    jabatan VARCHAR(50) NOT NULL,
+    departemen VARCHAR(50) NOT NULL,
+    gaji INT NOT NULL
+)`;
 
-    // Buat tabel otomatis jika belum ada di database cloud
-    const buatTabel = `CREATE TABLE IF NOT EXISTS karyawan (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        nama VARCHAR(100) NOT NULL,
-        jabatan VARCHAR(50) NOT NULL,
-        departemen VARCHAR(50) NOT NULL,
-        gaji INT NOT NULL
-    )`;
-    
-    db.query(buatTabel, (err, result) => {
-        if (err) throw err;
-        console.log('Tabel karyawan siap!');
-    });
+db.query(buatTabel, (err, result) => {
+    if (err) console.error("Gagal buat tabel:", err);
+    else console.log('Tabel karyawan siap!');
 });
 
 // ================= ROUTING CRUD =================
@@ -40,7 +41,10 @@ db.connect((err) => {
 // 1. READ: Menampilkan semua data karyawan
 app.get('/', (req, res) => {
     db.query('SELECT * FROM karyawan', (err, results) => {
-        if (err) throw err;
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Sedang menyiapkan database, coba refresh (F5) lagi...');
+        }
         res.render('index', { karyawan: results });
     });
 });
@@ -54,7 +58,7 @@ app.post('/tambah', (req, res) => {
     const { nama, jabatan, departemen, gaji } = req.body;
     db.query('INSERT INTO karyawan (nama, jabatan, departemen, gaji) VALUES (?, ?, ?, ?)', 
     [nama, jabatan, departemen, gaji], (err, results) => {
-        if (err) throw err;
+        if (err) console.error(err);
         res.redirect('/');
     });
 });
@@ -63,7 +67,7 @@ app.post('/tambah', (req, res) => {
 app.get('/edit/:id', (req, res) => {
     const id = req.params.id;
     db.query('SELECT * FROM karyawan WHERE id = ?', [id], (err, results) => {
-        if (err) throw err;
+        if (err) console.error(err);
         res.render('edit', { data: results[0] });
     });
 });
@@ -73,7 +77,7 @@ app.post('/edit/:id', (req, res) => {
     const { nama, jabatan, departemen, gaji } = req.body;
     db.query('UPDATE karyawan SET nama=?, jabatan=?, departemen=?, gaji=? WHERE id=?', 
     [nama, jabatan, departemen, gaji, id], (err, results) => {
-        if (err) throw err;
+        if (err) console.error(err);
         res.redirect('/');
     });
 });
@@ -82,7 +86,7 @@ app.post('/edit/:id', (req, res) => {
 app.get('/hapus/:id', (req, res) => {
     const id = req.params.id;
     db.query('DELETE FROM karyawan WHERE id = ?', [id], (err, results) => {
-        if (err) throw err;
+        if (err) console.error(err);
         res.redirect('/');
     });
 });
