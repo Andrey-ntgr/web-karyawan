@@ -6,7 +6,7 @@ const path = require('path'); // Tambahan khusus agar Vercel mengenali folder vi
 const app = express();
 
 // Beri tahu Vercel lokasi folder views yang benar
-app.set('views', path.join(process.cwd(), 'views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 
